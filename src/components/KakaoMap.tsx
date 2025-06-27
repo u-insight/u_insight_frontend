@@ -1,21 +1,12 @@
 "use client";
+
 import { useEffect, useRef, useState } from "react";
+import { Issue } from "@/store/useIssuesStore";
 
-declare global {
-  interface Window {
-    kakao: any;
-  }
+interface KakaoMapProps {
+  issues: Issue[];
+  center?: { lat: number; lng: number };
 }
-
-type Issue = {
-  id: number;
-  lat: number;
-  lng: number;
-  severity: "low" | "medium" | "high";
-  title: string;
-  description: string;
-  url?: string;
-};
 
 function createColorMarker(color: string) {
   const svg = `
@@ -32,25 +23,16 @@ const severityColors = {
   high: "#FF4500",
 };
 
-interface KakaoMapProps {
-  issues: Issue[];
-  center?: { lat: number; lng: number };
-}
-
 const KakaoMap = ({ issues, center }: KakaoMapProps) => {
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const infoWindowRef = useRef<any>(null);
-
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
   useEffect(() => {
     const loadMap = () => {
       const container = document.getElementById("map");
-      if (!container) {
-        console.error("지도 컨테이너를 찾을 수 없습니다.");
-        return;
-      }
+      if (!container) return;
 
       mapRef.current = new window.kakao.maps.Map(container, {
         center: new window.kakao.maps.LatLng(37.5665, 126.978),
@@ -65,19 +47,15 @@ const KakaoMap = ({ issues, center }: KakaoMapProps) => {
       script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_JS_KEY}&autoload=false`;
       script.async = true;
       document.head.appendChild(script);
-
       script.onload = () => {
-        window.kakao.maps.load(() => {
-          loadMap();
-        });
+        window.kakao.maps.load(loadMap);
       };
     } else {
-      window.kakao.maps.load(() => {
-        loadMap();
-      });
+      window.kakao.maps.load(loadMap);
     }
   }, []);
 
+  // 마커 표시
   useEffect(() => {
     if (!mapRef.current || !window.kakao) return;
 
@@ -93,7 +71,6 @@ const KakaoMap = ({ issues, center }: KakaoMapProps) => {
       );
 
       const position = new window.kakao.maps.LatLng(issue.lat, issue.lng);
-
       const marker = new window.kakao.maps.Marker({
         map: mapRef.current,
         position,
@@ -108,12 +85,12 @@ const KakaoMap = ({ issues, center }: KakaoMapProps) => {
           infoWindowRef.current.close();
           setSelectedId(null);
         } else {
-          infoWindowRef.current.setContent(
-            `<div style="padding:10px; min-width:250px;">
-               <h4 style="margin:0 0 5px 0;">${issue.title}</h4>
-               <p style="margin:0 0 5px 0;">${issue.description}</p>
-             </div>`
-          );
+          infoWindowRef.current.setContent(`
+            <div style="padding:10px; min-width:250px;">
+              <h4 style="margin:0 0 5px 0;">${issue.title}</h4>
+              <p style="margin:0 0 5px 0;">${issue.description}</p>
+            </div>
+          `);
           infoWindowRef.current.open(mapRef.current, marker);
           setSelectedId(issue.id);
         }
@@ -123,7 +100,6 @@ const KakaoMap = ({ issues, center }: KakaoMapProps) => {
 
   useEffect(() => {
     if (!mapRef.current || !center) return;
-
     const moveLatLng = new window.kakao.maps.LatLng(center.lat, center.lng);
     mapRef.current.setCenter(moveLatLng);
   }, [center]);
@@ -138,4 +114,3 @@ const KakaoMap = ({ issues, center }: KakaoMapProps) => {
 };
 
 export default KakaoMap;
-export type { Issue };
