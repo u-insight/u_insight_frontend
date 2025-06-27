@@ -1,0 +1,18 @@
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# dependencies
+node_modules/
+package-lock.json
+
+# mics
+.prettierrc
+eslint.config.mjs
+public/
+.vscode/
+.idea/
+.DS_Store
