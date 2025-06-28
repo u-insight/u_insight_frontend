@@ -528,6 +528,11 @@
   dependencies:
     tslib "^2.4.0"
 
+"@types/daum-postcode@^2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@types/daum-postcode/-/daum-postcode-2.0.3.tgz#4d7f2c903822c6fbbecf79883f2b6bfa02cc16c7"
+  integrity sha512-blgpizLcJ05Lw94mz5nLetcBv7I1IQRNN9wjBT3gJJLizGnE1fPBot+jx9L4XPiWK/yixyynHKna+V1JsY5Qog==
+
 "@types/estree@^1.0.6":
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-1.0.8.tgz#958b91c991b1867ced318bedea0e215ee050726e"
