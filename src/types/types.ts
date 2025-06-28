@@ -12,9 +12,3 @@ export interface KakaoMapProps {
   issues: Issue[];
   center?: { lat: number; lng: number };
 }
-
-declare global {
-  interface Window {
-    kakao: any;
-  }
-}

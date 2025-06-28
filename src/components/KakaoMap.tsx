@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ReportData } from "@/store/useReportsStore";
 import { UrgencyLevel_e } from "../types/report";
-import { MapProps } from "react-kakao-maps-sdk";
 
 interface KakaoMapProps {
   reports: ReportData[];
@@ -63,7 +62,17 @@ const KakaoMap = ({ reports, center }: KakaoMapProps) => {
   }, []);
 
   useEffect(() => {
-    if (!isMapLoaded) return;
+    if (!isMapLoaded) {
+      return;
+    }
+
+    if (!mapRef.current) {
+      return;
+    }
+
+    if (!infoWindowRef.current) {
+      return;
+    }
 
     markersRef.current.forEach((marker) => marker.setMap(null));
     markersRef.current = [];
@@ -76,13 +85,17 @@ const KakaoMap = ({ reports, center }: KakaoMapProps) => {
         { offset: new window.kakao.maps.Point(12, 12) },
       );
 
+      if (!report.coordinates) {
+        return;
+      }
+
       const position = new window.kakao.maps.LatLng(
-        report.coordinates?.lat,
-        report.coordinates?.lng,
+        report.coordinates.lat,
+        report.coordinates.lng,
       );
 
       const marker = new window.kakao.maps.Marker({
-        map: mapRef.current,
+        map: mapRef.current!,
         position,
         image: markerImage,
       });
@@ -96,32 +109,36 @@ const KakaoMap = ({ reports, center }: KakaoMapProps) => {
             <p style="margin:0 0 5px 0;">${report.description}</p>
           </div>
         `;
-        infoWindowRef.current?.setContent(content);
-        infoWindowRef.current?.open(mapRef.current!, marker);
+        infoWindowRef.current!.setContent(content);
+        infoWindowRef.current!.open(mapRef.current!, marker);
       });
     });
 
     if (reports.length > 1) {
-      const last = reports[reports.length - 1];
       const centerPos = new window.kakao.maps.LatLng(
         DEFAULT_CENTER.lat,
         DEFAULT_CENTER.lng,
       );
-      mapRef.current?.setCenter(centerPos);
-      mapRef.current?.setLevel(8);
+      mapRef.current.setCenter(centerPos);
+      mapRef.current.setLevel(8);
     } else if (reports.length === 1) {
       const first = reports[0];
+
+      if (!first.coordinates) {
+        return;
+      }
+
       const centerPos = new window.kakao.maps.LatLng(
-        first.coordinates?.lat,
-        first.coordinates?.lng,
+        first.coordinates.lat,
+        first.coordinates.lng,
       );
-      mapRef.current?.setCenter(centerPos);
+      mapRef.current.setCenter(centerPos);
     } else {
       const defaultCenterPos = new window.kakao.maps.LatLng(
         DEFAULT_CENTER.lat,
         DEFAULT_CENTER.lng,
       );
-      mapRef.current?.setCenter(defaultCenterPos);
+      mapRef.current.setCenter(defaultCenterPos);
     }
   }, [reports, isMapLoaded]);
 

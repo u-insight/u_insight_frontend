@@ -4,7 +4,6 @@ import { useReportsStore } from "@/store/useReportsStore";
 import { UrgencyLevel_e } from "@/types/report";
 import { MapPin } from "lucide-react";
 
-
 const AdminReportsPage = () => {
   const { reports } = useReportsStore();
   const mapRef = useRef<kakao.maps.Map>(null);
@@ -18,6 +17,10 @@ const AdminReportsPage = () => {
       center: new window.kakao.maps.LatLng(36.1527, 128.7213),
       level: 6,
     };
+
+    if (mapContainer === null) {
+      return;
+    }
 
     const map = new window.kakao.maps.Map(mapContainer, mapOption);
     mapRef.current = map;
@@ -44,9 +47,7 @@ const AdminReportsPage = () => {
           <small>${report.location}</small><br/>
         </div>`;
 
-      {/* // TODO */ }
       // <small>${new Date(report.timestamp).toLocaleDateString()}</small>
-
       const infowindow = new window.kakao.maps.InfoWindow({
         content: iwContent,
       });
@@ -102,7 +103,6 @@ const AdminReportsPage = () => {
                 <div className="flex items-center gap-2 max-w-[60%]">
                   <h3 className="font-semibold text-gray-800 truncate">{report.title || "제목 없음"}</h3>
                 </div>
-                {/* // TODO */}
                 {/* <span className="text-xs font-medium text-gray-500">
                   <span className={`text-xs font-medium ${urgencyColor}`}>{urgencyLabel}</span> |
                   상태: {report.status || "미지정"}
@@ -116,7 +116,6 @@ const AdminReportsPage = () => {
                 <span>{report.location}</span>
               </div>
 
-              {/* // TODO */}
               {/* <p className="mt-1 text-xs text-gray-400">
                 {new Date(report.timestamp).toLocaleDateString()}
               </p> */}
