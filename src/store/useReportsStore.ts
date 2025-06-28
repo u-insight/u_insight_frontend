@@ -24,7 +24,30 @@ interface ReportsState {
 }
 
 export const useReportsStore = create<ReportsState>((set) => ({
-  reports: [],
+  reports: [
+    {
+    "title": "",
+    "description": "asdf",
+    "location": "경상북도 의성군 의성읍 충효로 88",
+    "urgency": "urgent",
+    "images": [],
+    "coordinates": {
+        "lat": 36.355473200305546,
+        "lng": 128.70238171538088
+    }
+},
+{
+    "title": "",
+    "description": "asdf",
+    "location": "경상북도 의성군 봉양면 봉호로 14",
+    "urgency": "urgent",
+    "images": [],
+    "coordinates": {
+        "lat": 36.344546,
+        "lng": 128.704852
+    }
+}
+  ],
   center: { lat: 37.5665, lng: 126.978 },
   addReport: (report) => {
     console.log("Adding report:", report);

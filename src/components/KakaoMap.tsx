@@ -24,7 +24,7 @@ const urgencyColors = {
   [UrgencyLevel_e.Urgent]: "#FF4500",
 };
 
-const DEFAULT_CENTER = { lat: 37.5665, lng: 126.978 }; // 서울 기본 좌표
+const DEFAULT_CENTER = { lat: 36.35, lng: 128.70 };
 
 const KakaoMap = ({ reports, center }: KakaoMapProps) => {
   const mapRef = useRef<any>(null);
@@ -34,7 +34,6 @@ const KakaoMap = ({ reports, center }: KakaoMapProps) => {
 
   const mapCenter = center ?? DEFAULT_CENTER;
 
-  // 맵 초기화는 한 번만 실행
   useEffect(() => {
     const loadMap = () => {
       const container = document.getElementById("map");
@@ -60,13 +59,11 @@ const KakaoMap = ({ reports, center }: KakaoMapProps) => {
     } else {
       window.kakao.maps.load(loadMap);
     }
-  }, []); // 빈 배열: 처음에만 실행
+  }, []);
 
-  // 이슈가 변경되거나 맵이 로드되었을 때 마커 생성 및 중심 이동
   useEffect(() => {
     if (!isMapLoaded) return;
 
-    // 기존 마커 모두 제거
     markersRef.current.forEach((marker) => marker.setMap(null));
     markersRef.current = [];
 
@@ -75,13 +72,14 @@ const KakaoMap = ({ reports, center }: KakaoMapProps) => {
       const markerImage = new window.kakao.maps.MarkerImage(
         createColorMarker(color),
         new window.kakao.maps.Size(24, 24),
-        { offset: new window.kakao.maps.Point(12, 12) },
+        { offset: new window.kakao.maps.Point(12, 12) }
       );
 
       const position = new window.kakao.maps.LatLng(
         report.coordinates?.lat,
-        report.coordinates?.lng,
+        report.coordinates?.lng
       );
+
       const marker = new window.kakao.maps.Marker({
         map: mapRef.current,
         position,
@@ -103,18 +101,25 @@ const KakaoMap = ({ reports, center }: KakaoMapProps) => {
       });
     });
 
-    if (reports.length > 0) {
+    if (reports.length > 1) {
+      const last = reports[reports.length - 1];
+      const centerPos = new window.kakao.maps.LatLng(
+        DEFAULT_CENTER.lat,
+        DEFAULT_CENTER.lng,
+      );
+      mapRef.current.setCenter(centerPos);
+      mapRef.current.setLevel(8);
+    } else if (reports.length === 1) {
       const first = reports[0];
       const centerPos = new window.kakao.maps.LatLng(
         first.coordinates?.lat,
-        first.coordinates?.lng,
+        first.coordinates?.lng
       );
       mapRef.current.setCenter(centerPos);
     } else {
-      // 이슈 없으면 기본 서울 중심으로
       const defaultCenterPos = new window.kakao.maps.LatLng(
         DEFAULT_CENTER.lat,
-        DEFAULT_CENTER.lng,
+        DEFAULT_CENTER.lng
       );
       mapRef.current.setCenter(defaultCenterPos);
     }
