@@ -25,7 +25,7 @@ export class AddressService {
   public async openAddressSearch(): Promise<AddressData> {
     return new Promise((resolve, reject) => {
       // 1. 우선 Daum 주소 검색 라이브러리 로드
-      if (!daum || !daum.Postcode) {
+      if (!window.daum || !window.daum.Postcode) {
         this.loadDaumPostcodeScript()
           .then(() => this.executeDaumPostcode(resolve, reject))
           .catch(reject);
