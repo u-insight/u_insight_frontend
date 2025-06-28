@@ -14,21 +14,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { UrgencyLevel_e } from "../../../types/report";
 import { LocationPicker } from "../../../components/features/LocationPicker";
-
-interface FormData {
-  title: string;
-  description: string;
-  location: string;
-  urgency: UrgencyLevel_e;
-  coordinates?: {
-    lat: number;
-    lng: number;
-  };
-  images: File[];
-}
+import { ReportData, useReportsStore } from "../../../store/useReportsStore";
 
 export default function ReportsNew() {
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<ReportData>({
+    id: "",
     title: "",
     description: "",
     location: "",
@@ -41,6 +31,7 @@ export default function ReportsNew() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const router = useRouter();
+  const { addReport } = useReportsStore();
 
   const handleLocationSelect = (location: {
     address: string;
@@ -95,8 +86,10 @@ export default function ReportsNew() {
       // 임시로 성공 시뮬레이션
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const reportId = Date.now(); // 임시 ID
-      router.push(`/reports/${reportId}`);
+      // const reportId = Date.now(); // 임시 ID
+
+      addReport({ ...formData });
+      router.push(`/reports`);
     } catch (error) {
       setError("신고 접수 중 오류가 발생했습니다. 다시 시도해주세요.");
       console.error("Submit error:", error);
