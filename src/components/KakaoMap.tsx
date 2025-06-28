@@ -39,7 +39,7 @@ const KakaoMap = ({ issues, center }: KakaoMapProps) => {
 
       mapRef.current = new window.kakao.maps.Map(container, {
         center: new window.kakao.maps.LatLng(mapCenter.lat, mapCenter.lng),
-        level: 4,
+        level: 15,
       });
 
       infoWindowRef.current = new window.kakao.maps.InfoWindow({ zIndex: 1 });
@@ -120,8 +120,8 @@ const KakaoMap = ({ issues, center }: KakaoMapProps) => {
       <div
         id="map"
         style={{
-          width: "50%",
-          height: "500px",
+          width: "70%",
+          height: "350px",
           border: "2px solid gray",
           borderRadius: "10px",
         }}

@@ -144,7 +144,7 @@ export class LocationService {
   ): Promise<GeocodingResult> {
     try {
       // Kakao Map API를 사용한 역지오코딩
-      const KAKAO_API_KEY = process.env.NEXT_PUBLIC_KAKAO_API_KEY;
+      const KAKAO_API_KEY = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY;
 
       if (!KAKAO_API_KEY) {
         throw new Error("Kakao API 키가 설정되지 않았습니다.");

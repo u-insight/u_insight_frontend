@@ -25,7 +25,7 @@ export class AddressService {
   public async openAddressSearch(): Promise<AddressData> {
     return new Promise((resolve, reject) => {
       // 1. 우선 Daum 주소 검색 라이브러리 로드
-      if (!window.daum || !window.daum.Postcode) {
+      if (!daum || !daum.Postcode) {
         this.loadDaumPostcodeScript()
           .then(() => this.executeDaumPostcode(resolve, reject))
           .catch(reject);
@@ -92,10 +92,7 @@ export class AddressService {
   ): Promise<{ latitude: number; longitude: number } | null> {
     try {
       // Kakao Map API를 사용한 지오코딩
-      // 실제 구현시 Kakao Developers에서 앱 키 발급 필요
-      const KAKAO_API_KEY = process.env.NEXT_PUBLIC_KAKAO_JS_KEY;
-
-      console.log("KAKAO_API_KEY",KAKAO_API_KEY);
+      const KAKAO_API_KEY = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY;
 
       if (!KAKAO_API_KEY) {
         console.warn("Kakao API 키가 설정되지 않았습니다.");
