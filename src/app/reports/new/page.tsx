@@ -16,7 +16,16 @@ export default function InputPage() {
     severity: "low" as "low" | "medium" | "high",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  // 추가된 이슈 정보를 임시로 저장할 상태
+  const [addedIssue, setAddedIssue] = useState<{
+    title: string;
+    description: string;
+    severity: string;
+  } | null>(null);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -41,7 +50,11 @@ export default function InputPage() {
       lat: coords.lat,
       lng: coords.lng,
       severity,
+      address,
     });
+
+    // 이슈 추가 성공 시 addedIssue 상태 업데이트
+    setAddedIssue({ title, description, severity });
 
     alert("이슈가 등록되었습니다!");
 
@@ -97,7 +110,7 @@ export default function InputPage() {
         <option value="high">높음</option>
       </select>
 
-      <div className="flex space-x-2">
+      <div className="flex space-x-2 items-center">
         <button
           className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-md"
           onClick={handleAdd}
@@ -110,6 +123,15 @@ export default function InputPage() {
         >
           지도 보기
         </button>
+
+        {addedIssue && (
+          <div className="ml-4 p-2 border rounded bg-gray-50 max-w-xs">
+            <h4 className="font-bold mb-1">최근 추가된 이슈</h4>
+            <p><strong>제목:</strong> {addedIssue.title}</p>
+            <p><strong>설명:</strong> {addedIssue.description}</p>
+            <p><strong>심각도:</strong> {addedIssue.severity}</p>
+          </div>
+        )}
       </div>
     </div>
   );

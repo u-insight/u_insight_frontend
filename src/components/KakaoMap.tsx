@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { Issue } from "@/store/useIssuesStore";
 
@@ -23,23 +21,29 @@ const severityColors = {
   high: "#FF4500",
 };
 
+const DEFAULT_CENTER = { lat: 37.5665, lng: 126.978 }; // 서울 기본 좌표
+
 const KakaoMap = ({ issues, center }: KakaoMapProps) => {
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const infoWindowRef = useRef<any>(null);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
 
+  const mapCenter = center ?? DEFAULT_CENTER;
+
+  // 맵 초기화는 한 번만 실행
   useEffect(() => {
     const loadMap = () => {
       const container = document.getElementById("map");
       if (!container) return;
 
       mapRef.current = new window.kakao.maps.Map(container, {
-        center: new window.kakao.maps.LatLng(37.5665, 126.978),
+        center: new window.kakao.maps.LatLng(mapCenter.lat, mapCenter.lng),
         level: 4,
       });
 
       infoWindowRef.current = new window.kakao.maps.InfoWindow({ zIndex: 1 });
+      setIsMapLoaded(true);
     };
 
     if (!window.kakao) {
@@ -53,17 +57,18 @@ const KakaoMap = ({ issues, center }: KakaoMapProps) => {
     } else {
       window.kakao.maps.load(loadMap);
     }
-  }, []);
+  }, []); // 빈 배열: 처음에만 실행
 
-  // 마커 표시
+  // 이슈가 변경되거나 맵이 로드되었을 때 마커 생성 및 중심 이동
   useEffect(() => {
-    if (!mapRef.current || !window.kakao) return;
+    if (!isMapLoaded) return;
 
+    // 기존 마커 모두 제거
     markersRef.current.forEach((marker) => marker.setMap(null));
     markersRef.current = [];
 
     issues.forEach((issue) => {
-      const color = severityColors[issue.severity];
+      const color = severityColors[issue.severity] ?? "#000000";
       const markerImage = new window.kakao.maps.MarkerImage(
         createColorMarker(color),
         new window.kakao.maps.Size(24, 24),
@@ -81,35 +86,47 @@ const KakaoMap = ({ issues, center }: KakaoMapProps) => {
       markersRef.current.push(marker);
 
       window.kakao.maps.event.addListener(marker, "click", () => {
-        if (selectedId === issue.id) {
-          infoWindowRef.current.close();
-          setSelectedId(null);
-        } else {
-          infoWindowRef.current.setContent(`
-            <div style="padding:10px; min-width:250px;">
-              <h4 style="margin:0 0 5px 0;">${issue.title}</h4>
-              <p style="margin:0 0 5px 0;">${issue.description}</p>
-            </div>
-          `);
-          infoWindowRef.current.open(mapRef.current, marker);
-          setSelectedId(issue.id);
-        }
+        const content = `
+          <div style="padding:10px; min-width:250px;">
+            <h4 style="margin:0 0 5px 0;">${issue.title}</h4>
+            <p style="margin:0 0 5px 0;">${issue.description}</p>
+          </div>
+        `;
+        infoWindowRef.current.setContent(content);
+        infoWindowRef.current.open(mapRef.current, marker);
       });
     });
-  }, [issues, selectedId]);
 
-  useEffect(() => {
-    if (!mapRef.current || !center) return;
-    const moveLatLng = new window.kakao.maps.LatLng(center.lat, center.lng);
-    mapRef.current.setCenter(moveLatLng);
-  }, [center]);
+    if (issues.length > 0) {
+      const first = issues[0];
+      const centerPos = new window.kakao.maps.LatLng(first.lat, first.lng);
+      mapRef.current.setCenter(centerPos);
+    } else {
+      // 이슈 없으면 기본 서울 중심으로
+      const defaultCenterPos = new window.kakao.maps.LatLng(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng);
+      mapRef.current.setCenter(defaultCenterPos);
+    }
+  }, [issues, isMapLoaded]);
 
   return (
     <div
-      id="map"
-      className="w-full max-w-4xl h-[500px] border-2 border-gray-400 rounded-xl shadow-lg"
-      style={{ maxWidth: "500px", height: "500px" }}
-    />
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+      }}
+    >
+      <div
+        id="map"
+        style={{
+          width: "50%",
+          height: "500px",
+          border: "2px solid gray",
+          borderRadius: "10px",
+        }}
+      />
+    </div>
   );
 };
 

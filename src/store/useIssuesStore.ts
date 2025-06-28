@@ -9,6 +9,7 @@ export interface Issue {
   severity: "low" | "medium" | "high";
   title: string;
   description: string;
+  address: string;
 }
 
 interface IssueState {
