@@ -85,7 +85,6 @@ const KakaoMap = ({ reports, center }: KakaoMapProps) => {
         map: mapRef.current,
         position,
         image: markerImage,
-        title: "",
       });
 
       markersRef.current.push(marker);
