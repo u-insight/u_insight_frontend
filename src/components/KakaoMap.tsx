@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { Issue } from "@/store/useIssuesStore";
+import { ReportData } from "@/store/useReportsStore";
+import { UrgencyLevel_e } from "../types/report";
 
 interface KakaoMapProps {
-  issues: Issue[];
+  reports: ReportData[];
   center?: { lat: number; lng: number };
 }
 
@@ -11,19 +12,21 @@ function createColorMarker(color: string) {
     <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35">
       <circle cx="12" cy="12" r="10" fill="${color}" stroke="black" stroke-width="1" />
     </svg>`;
-  const encoded = encodeURIComponent(svg).replace(/'/g, "%27").replace(/"/g, "%22");
+  const encoded = encodeURIComponent(svg)
+    .replace(/'/g, "%27")
+    .replace(/"/g, "%22");
   return `data:image/svg+xml;charset=UTF-8,${encoded}`;
 }
 
-const severityColors = {
-  low: "#3CB371",
-  medium: "#FFD700",
-  high: "#FF4500",
+const urgencyColors = {
+  [UrgencyLevel_e.Low]: "#3CB371",
+  [UrgencyLevel_e.Normal]: "#FFD700",
+  [UrgencyLevel_e.Urgent]: "#FF4500",
 };
 
 const DEFAULT_CENTER = { lat: 37.5665, lng: 126.978 }; // 서울 기본 좌표
 
-const KakaoMap = ({ issues, center }: KakaoMapProps) => {
+const KakaoMap = ({ reports, center }: KakaoMapProps) => {
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const infoWindowRef = useRef<any>(null);
@@ -39,7 +42,7 @@ const KakaoMap = ({ issues, center }: KakaoMapProps) => {
 
       mapRef.current = new window.kakao.maps.Map(container, {
         center: new window.kakao.maps.LatLng(mapCenter.lat, mapCenter.lng),
-        level: 15,
+        level: 3,
       });
 
       infoWindowRef.current = new window.kakao.maps.InfoWindow({ zIndex: 1 });
@@ -67,19 +70,22 @@ const KakaoMap = ({ issues, center }: KakaoMapProps) => {
     markersRef.current.forEach((marker) => marker.setMap(null));
     markersRef.current = [];
 
-    issues.forEach((issue) => {
-      const color = severityColors[issue.severity] ?? "#000000";
+    reports.forEach((report) => {
+      const color = urgencyColors[report.urgency] ?? "#000000";
       const markerImage = new window.kakao.maps.MarkerImage(
         createColorMarker(color),
         new window.kakao.maps.Size(24, 24),
-        { offset: new window.kakao.maps.Point(12, 12) }
+        { offset: new window.kakao.maps.Point(12, 12) },
       );
 
-      const position = new window.kakao.maps.LatLng(issue.lat, issue.lng);
+      const position = new window.kakao.maps.LatLng(
+        report.coordinates?.lat,
+        report.coordinates?.lng,
+      );
       const marker = new window.kakao.maps.Marker({
         map: mapRef.current,
         position,
-        title: issue.title,
+        title: report.title,
         image: markerImage,
       });
 
@@ -88,8 +94,8 @@ const KakaoMap = ({ issues, center }: KakaoMapProps) => {
       window.kakao.maps.event.addListener(marker, "click", () => {
         const content = `
           <div style="padding:10px; min-width:250px;">
-            <h4 style="margin:0 0 5px 0;">${issue.title}</h4>
-            <p style="margin:0 0 5px 0;">${issue.description}</p>
+            <h4 style="margin:0 0 5px 0;">${report.title}</h4>
+            <p style="margin:0 0 5px 0;">${report.description}</p>
           </div>
         `;
         infoWindowRef.current.setContent(content);
@@ -97,16 +103,22 @@ const KakaoMap = ({ issues, center }: KakaoMapProps) => {
       });
     });
 
-    if (issues.length > 0) {
-      const first = issues[0];
-      const centerPos = new window.kakao.maps.LatLng(first.lat, first.lng);
+    if (reports.length > 0) {
+      const first = reports[0];
+      const centerPos = new window.kakao.maps.LatLng(
+        first.coordinates?.lat,
+        first.coordinates?.lng,
+      );
       mapRef.current.setCenter(centerPos);
     } else {
       // 이슈 없으면 기본 서울 중심으로
-      const defaultCenterPos = new window.kakao.maps.LatLng(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng);
+      const defaultCenterPos = new window.kakao.maps.LatLng(
+        DEFAULT_CENTER.lat,
+        DEFAULT_CENTER.lng,
+      );
       mapRef.current.setCenter(defaultCenterPos);
     }
-  }, [issues, isMapLoaded]);
+  }, [reports, isMapLoaded]);
 
   return (
     <div
