@@ -32,7 +32,7 @@ export const useReportsStore = create<ReportsState>((set) => ({
       title: "",
       description: "asdf",
       location: "경상북도 의성군 의성읍 충효로 88",
-      urgency: "urgent",
+      urgency: "normal",
       images: [],
       coordinates: {
         lat: 36.355473200305546,

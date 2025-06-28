@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { useReportsStore } from "@/store/useReportsStore";
+import { useReportsStore, ReportData } from "@/store/useReportsStore";
 import { UrgencyLevel_e } from "@/types/report";
 import { MapPin } from "lucide-react";
 
@@ -10,56 +10,128 @@ declare global {
   }
 }
 
+// SVG 원형 마커 생성 함수
+function createColorMarker(color: string) {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+      <circle cx="12" cy="12" r="10" fill="${color}" stroke="black" stroke-width="1" />
+    </svg>`;
+  const encoded = encodeURIComponent(svg)
+    .replace(/'/g, "%27")
+    .replace(/"/g, "%22");
+  return `data:image/svg+xml;charset=UTF-8,${encoded}`;
+}
+
+// 위험도별 컬러 정의
+const urgencyColors: Record<UrgencyLevel_e, string> = {
+  [UrgencyLevel_e.Low]: "#3CB371",    // 초록
+  [UrgencyLevel_e.Normal]: "#FFD700", // 노랑
+  [UrgencyLevel_e.Urgent]: "#FF4500", // 빨강
+};
+
+const DEFAULT_CENTER = { lat: 36.35, lng: 128.70 };
+
 const AdminReportsPage = () => {
   const { reports } = useReportsStore();
-  const mapRef = useRef<any>(null);
+  const mapRef = useRef<kakao.maps.Map | null>(null);
+  const markersRef = useRef<kakao.maps.Marker[]>([]);
+  const infoWindowRef = useRef<kakao.maps.InfoWindow | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
 
+  // 맵 초기화
   useEffect(() => {
-    if (!window.kakao || reports.length === 0) return;
+    const loadMap = () => {
+      const container = document.getElementById("adminMap");
+      if (!container) return;
 
-    const mapContainer = document.getElementById("adminMap");
-    const mapOption = {
-      center: new window.kakao.maps.LatLng(36.1527, 128.7213),
-      level: 6,
+      mapRef.current = new window.kakao.maps.Map(container, {
+        center: new window.kakao.maps.LatLng(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng),
+        level: 6,
+      });
+
+      infoWindowRef.current = new window.kakao.maps.InfoWindow({ zIndex: 1 });
+      setIsMapLoaded(true);
     };
 
-    const map = new window.kakao.maps.Map(mapContainer, mapOption);
-    mapRef.current = map;
+    if (!window.kakao) {
+      const script = document.createElement("script");
+      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_JS_KEY}&autoload=false`;
+      script.async = true;
+      document.head.appendChild(script);
+      script.onload = () => {
+        window.kakao.maps.load(loadMap);
+      };
+    } else {
+      window.kakao.maps.load(loadMap);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isMapLoaded || !mapRef.current) return;
+
+    markersRef.current.forEach((marker) => marker.setMap(null));
+    markersRef.current = [];
 
     reports.forEach((report) => {
       if (!report.coordinates) return;
-      const { lat, lng } = report.coordinates;
 
-      const urgencyColor = {
-        [UrgencyLevel_e.Urgent]: "#EF4444",
-        [UrgencyLevel_e.Normal]: "#F59E0B",
-        [UrgencyLevel_e.Low]: "#10B981",
-      }[report.urgency];
+      const color = urgencyColors[report.urgency] ?? "#000000";
+      const markerImage = new window.kakao.maps.MarkerImage(
+        createColorMarker(color),
+        new window.kakao.maps.Size(24, 24),
+        { offset: new window.kakao.maps.Point(12, 12) },
+      );
+
+      const position = new window.kakao.maps.LatLng(
+        report.coordinates.lat,
+        report.coordinates.lng,
+      );
 
       const marker = new window.kakao.maps.Marker({
-        position: new window.kakao.maps.LatLng(lat, lng),
-        map,
+        map: mapRef.current,
+        position,
+        image: markerImage,
         title: report.title,
       });
 
-      const iwContent = `
-        <div style="padding:10px;font-size:13px;min-width:150px;">
-          <strong style="color:${urgencyColor}">[${report.urgency}]</strong> ${report.title}<br/>
-          <small>${report.location}</small><br/>
-          <small>${new Date(report.timestamp).toLocaleDateString()}</small>
-        </div>`;
+      markersRef.current.push(marker);
 
-      const infowindow = new window.kakao.maps.InfoWindow({
-        content: iwContent,
-      });
+      const content = `
+        <div style="padding:10px; min-width:400px; font-size:14px;">
+          <strong style="color:${color};">[${report.urgency}] ${report.title || "제목 없음"}</strong><br/>
+          <div style="margin:5px 0;">${report.description}</div>
+          <div>위치: ${report.location}</div>
+          <div>날짜: ${new Date(report.timestamp).toLocaleDateString()}</div>
+          <div>상태: ${report.status || "미지정"}</div>
+        </div>
+      `;
 
-      window.kakao.maps.event.addListener(marker, "click", function () {
-        infowindow.open(map, marker);
-        setSelectedId(report.id); // 리스트 강조용
+      window.kakao.maps.event.addListener(marker, "click", () => {
+        infoWindowRef.current?.setContent(content);
+        infoWindowRef.current?.open(mapRef.current!, marker);
+        setSelectedId(report.id);
       });
     });
-  }, [reports]);
+
+    // 지도 중심 조정
+    if (reports.length === 1) {
+      const first = reports[0];
+      if (first.coordinates) {
+        mapRef.current.setCenter(new window.kakao.maps.LatLng(first.coordinates.lat, first.coordinates.lng));
+      }
+    } else if (reports.length > 1) {
+      const bounds = new window.kakao.maps.LatLngBounds();
+      reports.forEach((r) => {
+        if (r.coordinates) {
+          bounds.extend(new window.kakao.maps.LatLng(r.coordinates.lat, r.coordinates.lng));
+        }
+      });
+      mapRef.current.setBounds(bounds);
+    } else {
+      mapRef.current.setCenter(new window.kakao.maps.LatLng(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng));
+    }
+  }, [reports, isMapLoaded]);
 
   return (
     <div className="flex flex-col md:flex-row h-screen">
@@ -95,32 +167,22 @@ const AdminReportsPage = () => {
                 if (!report.coordinates) return;
                 if (!window.kakao || !window.kakao.maps) return;
 
-                const { lat, lng } = report.coordinates;
-                const loc = new window.kakao.maps.LatLng(lat, lng);
+                const loc = new window.kakao.maps.LatLng(report.coordinates.lat, report.coordinates.lng);
                 mapRef.current?.setCenter(loc);
                 setSelectedId(report.id);
               }}
             >
               <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2 max-w-[60%]">
-                  <h3 className="font-semibold text-gray-800 truncate">{report.title || "제목 없음"}</h3>
-                </div>
-                <span className="text-xs font-medium text-gray-500">
-                  <span className={`text-xs font-medium ${urgencyColor}`}>{urgencyLabel}</span> |
-                  상태: {report.status || "미지정"}
-                </span>
+                <h3 className="font-semibold text-gray-800 truncate max-w-[60%]">{report.title || "제목 없음"}</h3>
+                <span className={`text-xs font-medium ${urgencyColor}`}>{urgencyLabel}</span>
+                <span className="text-xs font-medium text-gray-500 ml-2">상태: {report.status || "미지정"}</span>
               </div>
-
               <p className="text-sm text-gray-600 line-clamp-2 mt-1">{report.description}</p>
-
               <div className="mt-2 text-xs text-gray-500 flex gap-2 items-center">
                 <MapPin className="w-3 h-3" />
                 <span>{report.location}</span>
               </div>
-
-              <p className="text-xs text-gray-400 mt-1">
-                {new Date(report.timestamp).toLocaleDateString()}
-              </p>
+              <p className="text-xs text-gray-400 mt-1">{new Date(report.timestamp).toLocaleDateString()}</p>
             </div>
           );
         })}
