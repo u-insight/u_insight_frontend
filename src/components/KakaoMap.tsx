@@ -83,7 +83,6 @@ const KakaoMap = ({ reports, center }: KakaoMapProps) => {
       const marker = new window.kakao.maps.Marker({
         map: mapRef.current,
         position,
-        title: report.title,
         image: markerImage,
       });
 
