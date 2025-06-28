@@ -14,21 +14,22 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { UrgencyLevel_e } from "../../../types/report";
 import { LocationPicker } from "../../../components/features/LocationPicker";
+import { ReportData, useReportsStore } from "../../../store/useReportsStore";
 
-interface FormData {
-  title: string;
-  description: string;
-  location: string;
-  urgency: UrgencyLevel_e;
-  coordinates?: {
-    lat: number;
-    lng: number;
-  };
-  images: File[];
-}
+// interface FormData {
+//   title: string;
+//   description: string;
+//   location: string;
+//   urgency: UrgencyLevel_e;
+//   coordinates?: {
+//     lat: number;
+//     lng: number;
+//   };
+//   images: File[];
+// }
 
 export default function ReportsNew() {
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<ReportData>({
     title: "",
     description: "",
     location: "",
@@ -41,6 +42,7 @@ export default function ReportsNew() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const router = useRouter();
+  const { addReport } = useReportsStore();
 
   const handleLocationSelect = (location: {
     address: string;
@@ -95,7 +97,9 @@ export default function ReportsNew() {
       // 임시로 성공 시뮬레이션
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const reportId = Date.now(); // 임시 ID
+      // const reportId = Date.now(); // 임시 ID
+
+      addReport({ ...formData });
       router.push(`/reports`);
     } catch (error) {
       setError("신고 접수 중 오류가 발생했습니다. 다시 시도해주세요.");
@@ -304,58 +308,6 @@ export default function ReportsNew() {
           />
         </div>
 
-        {/* <div className="p-6 bg-white border shadow-sm rounded-xl">
-          <label className="block mb-4 text-lg font-semibold text-gray-900">
-            사진 첨부
-            <span className="font-normal text-gray-500">(선택사항)</span>
-          </label>
-
-          <label htmlFor="image-upload">
-            <div className="p-8 text-center transition-all border-2 border-gray-300 border-dashed cursor-pointer rounded-xl hover:border-gray-400 hover:bg-gray-50">
-              <Plus className="w-8 h-8 mx-auto mb-3 text-gray-400" />
-              <p className="font-medium text-gray-600">사진을 추가하세요</p>
-              <p className="mt-1 text-sm text-gray-500">최대 5장까지 가능</p>
-            </div>
-          </label>
-
-          {formData.images.length > 0 && (
-            <div className="grid grid-cols-3 gap-3 mt-4">
-              {formData.images.map((image, index) => (
-                <div
-                  key={index}
-                  className="relative overflow-hidden border border-gray-200 rounded-lg group aspect-square"
-                >
-                  <Image
-                    src={URL.createObjectURL(image)}
-                    fill
-                    alt="첨부 이미지 미리보기"
-                    className="object-cover"
-                  />
-                  <button
-                    onClick={() => removeImage(index)}
-                    className="absolute flex items-center justify-center w-6 h-6 text-sm text-white transition-opacity bg-red-500 rounded-full opacity-0 top-2 right-2 group-hover:opacity-100"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            className="hidden"
-            id="image-upload"
-            onChange={(e) => {
-              if (e.target.files) {
-                handleImageUpload(Array.from(e.target.files));
-              }
-            }}
-          />
-        </div> */}
-
         {/* 제출 버튼 */}
         <div className="sticky bottom-0 bg-gray-50 pt-4 pb-6">
           <button
@@ -532,258 +484,3 @@ const ImageCarousel = ({
     </div>
   );
 };
-
-// "use client";
-
-// import Image from "next/image";
-// import { ChevronLeft, Plus } from "lucide-react";
-// import { useRouter } from "next/navigation";
-// import { useState } from "react";
-// import { UrgencyLevel_e } from "../../../types/report";
-// import { LocationPicker } from "../../../components/features/LocationPicker";
-
-// interface FormData {
-//   title: string;
-//   description: string;
-//   location: string;
-//   urgency: UrgencyLevel_e;
-//   coordinates?: {
-//     lat: number;
-//     lng: number;
-//   };
-//   images: File[];
-// }
-
-// export default function ReportsNew() {
-//   const [formData, setFormData] = useState<FormData>({
-//     title: "",
-//     description: "",
-//     location: "",
-//     urgency: UrgencyLevel_e.Normal,
-//     images: [],
-//   });
-
-//   const [error, setError] = useState<string>("");
-//   const [isSubmitting, setIsSubmitting] = useState(false);
-
-//   const router = useRouter();
-
-//   const handleLocationSelect = (location: {
-//     address: string;
-//     latitude?: number;
-//     longitude?: number;
-//     accuracy?: number;
-//   }) => {
-//     setFormData((prev) => ({
-//       ...prev,
-//       location: location.address,
-//       coordinates:
-//         location.latitude && location.longitude
-//           ? {
-//               lat: location.latitude,
-//               lng: location.longitude,
-//             }
-//           : undefined,
-//     }));
-//   };
-
-//   const handleUrgencySelect = (urgency: UrgencyLevel_e) => {
-//     setFormData((prev) => ({ ...prev, urgency }));
-//   };
-
-//   const handleImageUpload = (files: File[]) => {
-//     setFormData((prev) => {
-//       return { ...prev, images: prev.images.concat(files) };
-//     });
-//   };
-
-//   const validateForm = () => {
-//     if (!formData.description.trim()) {
-//       setError("문제 설명을 입력해주세요.");
-//       return false;
-//     }
-//     if (!formData.location.trim()) {
-//       setError("위치 정보를 선택해주세요.");
-//       return false;
-//     }
-//     setError("");
-//     return true;
-//   };
-
-//   const handleSubmit = async () => {
-//     if (!validateForm()) return;
-
-//     setIsSubmitting(true);
-//     try {
-//       // TODO: API 호출 로직 구현
-//       console.log("제출할 데이터:", formData);
-
-//       // 임시로 성공 시뮬레이션
-//       await new Promise((resolve) => setTimeout(resolve, 1000));
-
-//       const reportId = Date.now(); // 임시 ID
-//       router.push(`/reports/${reportId}`);
-//     } catch (error) {
-//       setError("신고 접수 중 오류가 발생했습니다. 다시 시도해주세요.");
-//       console.error("Submit error:", error);
-//     } finally {
-//       setIsSubmitting(false);
-//     }
-//   };
-
-//   const getUrgencyButtonClass = (urgencyType: UrgencyLevel_e) => {
-//     const baseClass =
-//       "rounded-xl border-4 p-6 text-xl font-black shadow-lg transition-all";
-//     const isSelected = formData.urgency === urgencyType;
-
-//     switch (urgencyType) {
-//       case UrgencyLevel_e.Urgent:
-//         return `${baseClass} ${isSelected ? "bg-red-primary border-red-secondary text-white" : "bg-white border-red-primary text-red-primary"}`;
-//       case UrgencyLevel_e.Normal:
-//         return `${baseClass} ${isSelected ? "bg-yellow-primary border-yellow-secondary text-black" : "bg-white border-yellow-primary text-yellow-600"}`;
-//       case UrgencyLevel_e.Low:
-//         return `${baseClass} ${isSelected ? "bg-green-primary border-green-secondary text-white" : "bg-white border-green-primary text-green-primary"}`;
-//       default:
-//         return baseClass;
-//     }
-//   };
-
-//   return (
-//     <div className="min-h-screen bg-gray-50">
-//       <div className="p-6 text-white bg-green-primary">
-//         <div className="flex items-center justify-between">
-//           <button
-//             onClick={() => router.back()}
-//             className="p-3 transition-all bg-white rounded-lg bg-opacity-20 active:scale-95"
-//           >
-//             <ChevronLeft className="w-8 h-8" />
-//           </button>
-//           <h1 className="text-2xl font-black">문제 신고하기</h1>
-//           <div className="w-14"></div>
-//         </div>
-//       </div>
-
-//       <div className="p-8 space-y-8">
-//         <div className="text-center">
-//           <div className="flex items-center justify-center w-20 h-20 mx-auto mb-6 rounded-full shadow-lg bg-red-primary">
-//             <Plus className="w-10 h-10 text-white" />
-//           </div>
-//           <h2 className="text-3xl font-black text-gray-900">
-//             어떤 문제인가요?
-//           </h2>
-//         </div>
-
-//         {/* 에러 메시지 */}
-//         {error && (
-//           <div className="p-4 border-4 border-red-200 rounded-xl bg-red-50">
-//             <p className="text-lg font-bold text-red-600">⚠️ {error}</p>
-//           </div>
-//         )}
-
-//         <div>
-//           <label className="block mb-4 text-2xl font-black text-gray-900">
-//             문제 설명
-//           </label>
-//           <textarea
-//             className="w-full h-40 p-6 text-xl font-bold bg-white border-4 border-gray-400 rounded-xl focus:border-green-600 focus:outline-none"
-//             placeholder="예: 가로등이 고장났어요. 밤에 너무 어두워서 위험해요."
-//             value={formData.description}
-//             onChange={(e) =>
-//               setFormData((prev) => ({ ...prev, description: e.target.value }))
-//             }
-//           />
-//         </div>
-
-//         <div>
-//           <label className="block mb-4 text-2xl font-black text-gray-900">
-//             위치
-//           </label>
-//           <LocationPicker
-//             onLocationSelect={handleLocationSelect}
-//             initialAddress={formData.location}
-//             required={true}
-//           />
-//         </div>
-
-//         <div>
-//           <label className="block mb-4 text-2xl font-black text-gray-900">
-//             긴급도
-//           </label>
-//           <div className="grid grid-cols-3 gap-4">
-//             <button
-//               className={getUrgencyButtonClass(UrgencyLevel_e.Urgent)}
-//               onClick={() => handleUrgencySelect(UrgencyLevel_e.Urgent)}
-//             >
-//               긴급
-//             </button>
-//             <button
-//               className={getUrgencyButtonClass(UrgencyLevel_e.Normal)}
-//               onClick={() => handleUrgencySelect(UrgencyLevel_e.Normal)}
-//             >
-//               보통
-//             </button>
-//             <button
-//               className={getUrgencyButtonClass(UrgencyLevel_e.Low)}
-//               onClick={() => handleUrgencySelect(UrgencyLevel_e.Low)}
-//             >
-//               낮음
-//             </button>
-//           </div>
-//         </div>
-
-//         <div>
-//           <label className="block mb-4 text-2xl font-black text-gray-900">
-//             사진 첨부 (선택)
-//           </label>
-
-//           <label htmlFor="image-upload">
-//             <div className="w-full p-10 text-center transition-colors bg-white border-4 border-gray-400 border-dashed shadow-lg cursor-pointer rounded-xl hover:border-green-600">
-//               <Plus className="w-10 h-10 mx-auto mb-3 text-gray-600" />
-//               <p className="text-xl font-bold text-gray-600">
-//                 사진을 추가하세요
-//               </p>
-//             </div>
-//           </label>
-
-//           {formData.images.length > 0 && (
-//             <div className="grid h-10 grid-cols-3 gap-4 mt-4">
-//               {formData.images.map((image, index) => (
-//                 <div
-//                   key={index}
-//                   className="relative w-full h-20 bg-gray-100 border-2 border-gray-300 rounded-lg"
-//                 >
-//                   <Image
-//                     src={URL.createObjectURL(image)}
-//                     fill
-//                     alt="첨부 이미지 미리보기"
-//                   />
-//                 </div>
-//               ))}
-//             </div>
-//           )}
-
-//           <input
-//             type="file"
-//             accept="image/*"
-//             multiple
-//             className="hidden"
-//             id="image-upload"
-//             onChange={(e) => {
-//               if (e.target.files) {
-//                 handleImageUpload(Array.from(e.target.files));
-//               }
-//             }}
-//           />
-//         </div>
-
-//         <button
-//           className="w-full p-6 mt-4 text-2xl font-black text-white transition-all border-4 shadow-xl bg-green-primary border-green-secondary rounded-xl active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
-//           onClick={handleSubmit}
-//           disabled={isSubmitting}
-//         >
-//           {isSubmitting ? "신고 접수 중..." : "신고하기"}
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
