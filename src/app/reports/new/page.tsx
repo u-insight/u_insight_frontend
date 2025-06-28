@@ -96,7 +96,7 @@ export default function ReportsNew() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const reportId = Date.now(); // 임시 ID
-      router.push(`/reports/${reportId}`);
+      router.push(`/reports`);
     } catch (error) {
       setError("신고 접수 중 오류가 발생했습니다. 다시 시도해주세요.");
       console.error("Submit error:", error);

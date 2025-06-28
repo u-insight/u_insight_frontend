@@ -106,15 +106,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
         ...coordinates,
       });
     }
-  }, [
-    selectedMethod,
-    gpsAddress,
-    location,
-    searchedAddress,
-    manualAddress,
-    onLocationSelect,
-    geocodeAddress,
-  ]);
+  }, [selectedMethod, gpsAddress, location, searchedAddress, manualAddress]);
 
   const handleGPSLocation = async () => {
     setSelectedMethod("gps");
