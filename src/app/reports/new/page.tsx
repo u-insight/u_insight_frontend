@@ -45,9 +45,9 @@ export default function ReportsNew() {
       coordinates:
         location.latitude && location.longitude
           ? {
-              lat: location.latitude,
-              lng: location.longitude,
-            }
+            lat: location.latitude,
+            lng: location.longitude,
+          }
           : undefined,
     }));
   };
@@ -152,34 +152,33 @@ export default function ReportsNew() {
     const config = getUrgencyConfig(urgencyType);
     const isSelected = formData.urgency === urgencyType;
 
-    return `relative rounded-xl border-2 p-4 transition-all duration-200 hover:shadow-md ${
-      isSelected
+    return `relative rounded-xl border-2 p-4 transition-all duration-200 hover:shadow-md ${isSelected
         ? `${config.selectedColor} shadow-lg`
         : `${config.baseColor} hover:border-gray-300`
-    }`;
+      }`;
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 헤더 */}
-      <div className="border-b bg-white shadow-sm">
+      <div className="bg-white border-b shadow-sm">
         <div className="flex items-center justify-between px-4 py-4">
           <button
             onClick={() => router.back()}
-            className="flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-gray-100"
+            className="flex items-center justify-center w-10 h-10 transition-colors rounded-full hover:bg-gray-100"
           >
-            <ChevronLeft className="h-6 w-6 text-gray-600" />
+            <ChevronLeft className="w-6 h-6 text-gray-600" />
           </button>
           <h1 className="text-lg font-semibold text-gray-900">문제 신고하기</h1>
           <div className="w-10"></div>
         </div>
       </div>
 
-      <div className="mx-auto max-w-2xl space-y-8 px-4 py-6">
+      <div className="max-w-2xl px-4 py-6 mx-auto space-y-8">
         {/* 헤더 섹션 */}
         <div className="py-6 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500 shadow-lg shadow-blue-500/20">
-            <Plus className="h-8 w-8 text-white" />
+          <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-blue-500 shadow-lg rounded-2xl shadow-blue-500/20">
+            <Plus className="w-8 h-8 text-white" />
           </div>
           <h2 className="mb-2 text-2xl font-bold text-gray-900">
             어떤 문제가 있나요?
@@ -191,18 +190,18 @@ export default function ReportsNew() {
 
         {/* 에러 메시지 */}
         {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 p-4">
+          <div className="p-4 border border-red-200 rounded-xl bg-red-50">
             <p className="font-medium text-red-700">⚠️ {error}</p>
           </div>
         )}
 
         {/* 문제 설명 */}
-        <div className="rounded-xl border bg-white p-6 shadow-sm">
-          <label className="mb-3 block text-lg font-semibold text-gray-900">
+        <div className="p-6 bg-white border shadow-sm rounded-xl">
+          <label className="block mb-3 text-lg font-semibold text-gray-900">
             문제 설명
           </label>
           <textarea
-            className="h-32 w-full resize-none rounded-lg border border-gray-200 p-4 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="w-full h-32 p-4 transition-all border border-gray-200 rounded-lg resize-none focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
             placeholder="예: 가로등이 고장났어요. 밤에 너무 어두워서 위험해요."
             value={formData.description}
             onChange={(e) => {
@@ -219,7 +218,7 @@ export default function ReportsNew() {
         </div>
 
         {/* 위치 정보 */}
-        <div className="rounded-xl border bg-white p-6 shadow-sm">
+        <div className="p-6 bg-white border shadow-sm rounded-xl">
           <LocationPicker
             onLocationSelect={handleLocationSelect}
             initialAddress={formData.location}
@@ -228,8 +227,8 @@ export default function ReportsNew() {
         </div>
 
         {/* 긴급도 */}
-        <div className="rounded-xl border bg-white p-6 shadow-sm">
-          <label className="mb-4 block text-lg font-semibold text-gray-900">
+        <div className="p-6 bg-white border shadow-sm rounded-xl">
+          <label className="block mb-4 text-lg font-semibold text-gray-900">
             긴급도
           </label>
           <div className="grid grid-cols-3 gap-3">
@@ -247,7 +246,7 @@ export default function ReportsNew() {
                   onClick={() => handleUrgencySelect(urgency)}
                 >
                   <div className="flex flex-col items-center gap-2">
-                    <Icon className="h-6 w-6" />
+                    <Icon className="w-6 h-6" />
                     <span className="font-medium">{config.label}</span>
                   </div>
                 </button>
@@ -257,8 +256,8 @@ export default function ReportsNew() {
         </div>
 
         {/* 사진 첨부 */}
-        <div className="rounded-xl border bg-white p-6 shadow-sm">
-          <label className="mb-4 block text-lg font-semibold text-gray-900">
+        <div className="p-6 bg-white border shadow-sm rounded-xl">
+          <label className="block mb-4 text-lg font-semibold text-gray-900">
             사진 첨부{" "}
             <span className="font-normal text-gray-500">(선택사항)</span>
           </label>
@@ -266,8 +265,8 @@ export default function ReportsNew() {
           {formData.images.length === 0 ? (
             // 빈 상태일 때 업로드 영역
             <label htmlFor="image-upload">
-              <div className="cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-all hover:border-gray-400 hover:bg-gray-50">
-                <Plus className="mx-auto mb-3 h-8 w-8 text-gray-400" />
+              <div className="p-8 text-center transition-all border-2 border-gray-300 border-dashed cursor-pointer rounded-xl hover:border-gray-400 hover:bg-gray-50">
+                <Plus className="w-8 h-8 mx-auto mb-3 text-gray-400" />
                 <p className="font-medium text-gray-600">사진을 추가하세요</p>
                 <p className="mt-1 text-sm text-gray-500">최대 5장까지 가능</p>
               </div>
@@ -298,15 +297,15 @@ export default function ReportsNew() {
         </div>
 
         {/* 제출 버튼 */}
-        <div className="sticky bottom-0 bg-gray-50 pt-4 pb-6">
+        <div className="sticky bottom-0 pt-4 pb-6 bg-gray-50">
           <button
-            className="w-full rounded-xl bg-blue-500 px-6 py-4 font-semibold text-white shadow-lg transition-all duration-200 hover:bg-blue-600 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-blue-500"
+            className="w-full px-6 py-4 font-semibold text-white transition-all duration-200 bg-blue-500 shadow-lg rounded-xl hover:bg-blue-600 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-blue-500"
             onClick={handleSubmit}
             disabled={isSubmitting}
           >
             {isSubmitting ? (
               <div className="flex items-center justify-center gap-2">
-                <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                <div className="w-5 h-5 border-2 border-white rounded-full animate-spin border-t-transparent"></div>
                 신고 접수 중...
               </div>
             ) : (
@@ -380,7 +379,7 @@ const ImageCarousel = ({
       {/* 메인 이미지 영역 */}
       <div className="relative">
         <div
-          className="relative h-80 overflow-hidden rounded-xl border-2 border-gray-200 bg-gray-100"
+          className="relative overflow-hidden bg-gray-100 border-2 border-gray-200 h-80 rounded-xl"
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
@@ -395,14 +394,14 @@ const ImageCarousel = ({
           {/* 삭제 버튼 */}
           <button
             onClick={() => onRemoveImage(currentIndex)}
-            className="absolute top-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-white shadow-lg transition-colors hover:bg-red-600"
+            className="absolute flex items-center justify-center w-10 h-10 text-white transition-colors bg-red-500 rounded-full shadow-lg top-3 right-3 hover:bg-red-600"
             aria-label={`이미지 ${currentIndex + 1} 삭제`}
           >
-            <X className="h-5 w-5" />
+            <X className="w-5 h-5" />
           </button>
 
           {/* 이미지 번호 표시 */}
-          <div className="bg-opacity-60 absolute top-3 left-3 rounded-full bg-black px-3 py-1 text-sm font-medium text-white">
+          <div className="absolute px-3 py-1 text-sm font-medium text-white bg-black rounded-full bg-opacity-60 top-3 left-3">
             {currentIndex + 1} / {images.length}
           </div>
 
@@ -412,19 +411,19 @@ const ImageCarousel = ({
               <button
                 onClick={goToPrevious}
                 disabled={currentIndex === 0}
-                className="bg-opacity-90 hover:bg-opacity-100 absolute top-1/2 left-3 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-lg transition-all disabled:cursor-not-allowed disabled:opacity-50"
+                className="absolute flex items-center justify-center w-12 h-12 transition-all -translate-y-1/2 bg-white rounded-full shadow-lg bg-opacity-90 hover:bg-opacity-100 top-1/2 left-3 disabled:cursor-not-allowed disabled:opacity-50"
                 aria-label="이전 이미지"
               >
-                <ChevronLeft className="h-6 w-6 text-gray-700" />
+                <ChevronLeft className="w-6 h-6 text-gray-700" />
               </button>
 
               <button
                 onClick={goToNext}
                 disabled={currentIndex === images.length - 1}
-                className="bg-opacity-90 hover:bg-opacity-100 absolute top-1/2 right-3 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-lg transition-all disabled:cursor-not-allowed disabled:opacity-50"
+                className="absolute flex items-center justify-center w-12 h-12 transition-all -translate-y-1/2 bg-white rounded-full shadow-lg bg-opacity-90 hover:bg-opacity-100 top-1/2 right-3 disabled:cursor-not-allowed disabled:opacity-50"
                 aria-label="다음 이미지"
               >
-                <ChevronRight className="h-6 w-6 text-gray-700" />
+                <ChevronRight className="w-6 h-6 text-gray-700" />
               </button>
             </>
           )}
@@ -432,17 +431,16 @@ const ImageCarousel = ({
       </div>
 
       {/* 썸네일 네비게이션 + 추가 버튼 */}
-      <div className="flex gap-2 overflow-x-auto pb-2">
+      <div className="flex gap-2 pb-2 overflow-x-auto">
         {/* 기존 이미지 썸네일들 */}
         {images.map((image, index) => (
           <button
             key={index}
             onClick={() => setCurrentIndex(index)}
-            className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all ${
-              currentIndex === index
+            className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all ${currentIndex === index
                 ? "border-blue-500 shadow-md"
                 : "border-gray-200 hover:border-gray-300"
-            }`}
+              }`}
           >
             <Image
               src={URL.createObjectURL(image)}
@@ -457,10 +455,10 @@ const ImageCarousel = ({
         {images.length < 5 && (
           <button
             onClick={onAddMore}
-            className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-100 transition-all hover:border-gray-400 hover:bg-gray-200"
+            className="flex items-center justify-center flex-shrink-0 w-16 h-16 transition-all bg-gray-100 border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 hover:bg-gray-200"
             aria-label="사진 추가"
           >
-            <Plus className="h-6 w-6 text-gray-500" />
+            <Plus className="w-6 h-6 text-gray-500" />
           </button>
         )}
       </div>

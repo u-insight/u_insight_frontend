@@ -4,15 +4,10 @@ import { useReportsStore } from "@/store/useReportsStore";
 import { UrgencyLevel_e } from "@/types/report";
 import { MapPin } from "lucide-react";
 
-declare global {
-  interface Window {
-    kakao: any;
-  }
-}
 
 const AdminReportsPage = () => {
   const { reports } = useReportsStore();
-  const mapRef = useRef<any>(null);
+  const mapRef = useRef<kakao.maps.Map>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -47,8 +42,10 @@ const AdminReportsPage = () => {
         <div style="padding:10px;font-size:13px;min-width:150px;">
           <strong style="color:${urgencyColor}">[${report.urgency}]</strong> ${report.title}<br/>
           <small>${report.location}</small><br/>
-          <small>${new Date(report.timestamp).toLocaleDateString()}</small>
         </div>`;
+
+      {/* // TODO */ }
+      // <small>${new Date(report.timestamp).toLocaleDateString()}</small>
 
       const infowindow = new window.kakao.maps.InfoWindow({
         content: iwContent,
@@ -62,29 +59,29 @@ const AdminReportsPage = () => {
   }, [reports]);
 
   return (
-    <div className="flex flex-col md:flex-row h-screen">
+    <div className="flex flex-col h-screen md:flex-row">
       {/* 지도 영역 */}
-      <div className="md:w-2/3 h-64 md:h-full">
+      <div className="h-64 md:w-2/3 md:h-full">
         <div id="adminMap" className="w-full h-full" />
       </div>
 
       {/* 리스트 영역 */}
       <div className="md:w-1/3 h-[calc(100vh-16rem)] md:h-full overflow-y-auto border-t md:border-t-0 md:border-l bg-white p-4">
-        <h2 className="text-lg font-semibold mb-4">신고 목록 ({reports.length}건)</h2>
+        <h2 className="mb-4 text-lg font-semibold">신고 목록 ({reports.length}건)</h2>
 
         {reports.map((report) => {
           const isActive = selectedId === report.id;
-          const urgencyLabel = {
-            [UrgencyLevel_e.Urgent]: "긴급",
-            [UrgencyLevel_e.Normal]: "보통",
-            [UrgencyLevel_e.Low]: "낮음",
-          }[report.urgency];
+          // const urgencyLabel = {
+          //   [UrgencyLevel_e.Urgent]: "긴급",
+          //   [UrgencyLevel_e.Normal]: "보통",
+          //   [UrgencyLevel_e.Low]: "낮음",
+          // }[report.urgency];
 
-          const urgencyColor = {
-            [UrgencyLevel_e.Urgent]: "text-red-600",
-            [UrgencyLevel_e.Normal]: "text-amber-600",
-            [UrgencyLevel_e.Low]: "text-green-600",
-          }[report.urgency];
+          // const urgencyColor = {
+          //   [UrgencyLevel_e.Urgent]: "text-red-600",
+          //   [UrgencyLevel_e.Normal]: "text-amber-600",
+          //   [UrgencyLevel_e.Low]: "text-green-600",
+          // }[report.urgency];
 
           return (
             <div
@@ -101,26 +98,28 @@ const AdminReportsPage = () => {
                 setSelectedId(report.id);
               }}
             >
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 max-w-[60%]">
                   <h3 className="font-semibold text-gray-800 truncate">{report.title || "제목 없음"}</h3>
                 </div>
-                <span className="text-xs font-medium text-gray-500">
+                {/* // TODO */}
+                {/* <span className="text-xs font-medium text-gray-500">
                   <span className={`text-xs font-medium ${urgencyColor}`}>{urgencyLabel}</span> |
                   상태: {report.status || "미지정"}
-                </span>
+                </span> */}
               </div>
 
-              <p className="text-sm text-gray-600 line-clamp-2 mt-1">{report.description}</p>
+              <p className="mt-1 text-sm text-gray-600 line-clamp-2">{report.description}</p>
 
-              <div className="mt-2 text-xs text-gray-500 flex gap-2 items-center">
+              <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
                 <MapPin className="w-3 h-3" />
                 <span>{report.location}</span>
               </div>
 
-              <p className="text-xs text-gray-400 mt-1">
+              {/* // TODO */}
+              {/* <p className="mt-1 text-xs text-gray-400">
                 {new Date(report.timestamp).toLocaleDateString()}
-              </p>
+              </p> */}
             </div>
           );
         })}
