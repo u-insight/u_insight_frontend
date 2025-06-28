@@ -1,16 +1,19 @@
 "use client";
-import Image from "next/image";
+
 import { Siren, View } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
   return (
     <div
-      className="relative flex min-h-screen items-start justify-center bg-cover bg-center px-4 pt-20 sm:px-6"
+      className="relative flex items-start justify-center min-h-screen px-4 pt-20 bg-center bg-cover sm:px-6"
       style={{
         backgroundImage: "url('/images/ui.jpg')",
       }}
     >
-      <div className="w-full max-w-lg rounded-xl bg-white/70 p-4 text-center shadow-md sm:max-w-xl sm:p-8 lg:p-12">
+      <div className="w-full max-w-lg p-4 text-center shadow-md rounded-xl bg-white/70 sm:max-w-xl sm:p-8 lg:p-12">
         <h1 className="text-2xl font-bold text-green-600 sm:text-2xl">
           Hello, U-Insight!
         </h1>
@@ -19,17 +22,17 @@ export default function Home() {
         </p>
 
         {/* Responsive Buttons */}
-        <div className="mt-6 flex w-full flex-col justify-between gap-4 sm:flex-row">
+        <div className="flex flex-col justify-between w-full gap-4 mt-6 sm:flex-row">
           <button
-            className="bg-red-primary flex w-full items-center justify-center gap-2 rounded-lg px-6 py-2 font-semibold text-white shadow hover:opacity-50 focus:opacity-50 sm:w-auto"
-            onClick={() => alert("신청하기")}
+            className="flex items-center justify-center w-full gap-2 px-6 py-2 font-semibold text-white rounded-lg shadow bg-red-primary hover:opacity-50 focus:opacity-50 sm:w-auto"
+            onClick={() => router.push("/reports/new")}
           >
             <Siren size={20} color="white" />
             신청하기
           </button>
           <button
-            className="bg-green-primary flex w-full items-center justify-center gap-2 rounded-lg px-6 py-2 font-semibold text-white shadow hover:opacity-50 focus:opacity-50 sm:w-auto"
-            onClick={() => alert("신고 현황 보기")}
+            className="flex items-center justify-center w-full gap-2 px-6 py-2 font-semibold text-white rounded-lg shadow bg-green-primary hover:opacity-50 focus:opacity-50 sm:w-auto"
+            onClick={() => router.push("/reports")}
           >
             <View size={20} color="white" />
             신고 현황 보기
