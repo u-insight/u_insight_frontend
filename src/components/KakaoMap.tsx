@@ -24,7 +24,7 @@ const urgencyColors = {
   [UrgencyLevel_e.Urgent]: "#FF4500",
 };
 
-const DEFAULT_CENTER = { lat: 36.35, lng: 128.70 };
+const DEFAULT_CENTER = { lat: 36.300984, lng: 128.682581 }; // 의성군 기본 좌표
 
 const KakaoMap = ({ reports, center }: KakaoMapProps) => {
   const mapRef = useRef<any>(null);
@@ -72,12 +72,12 @@ const KakaoMap = ({ reports, center }: KakaoMapProps) => {
       const markerImage = new window.kakao.maps.MarkerImage(
         createColorMarker(color),
         new window.kakao.maps.Size(24, 24),
-        { offset: new window.kakao.maps.Point(12, 12) }
+        { offset: new window.kakao.maps.Point(12, 12) },
       );
 
       const position = new window.kakao.maps.LatLng(
         report.coordinates?.lat,
-        report.coordinates?.lng
+        report.coordinates?.lng,
       );
 
       const marker = new window.kakao.maps.Marker({
@@ -113,13 +113,13 @@ const KakaoMap = ({ reports, center }: KakaoMapProps) => {
       const first = reports[0];
       const centerPos = new window.kakao.maps.LatLng(
         first.coordinates?.lat,
-        first.coordinates?.lng
+        first.coordinates?.lng,
       );
       mapRef.current.setCenter(centerPos);
     } else {
       const defaultCenterPos = new window.kakao.maps.LatLng(
         DEFAULT_CENTER.lat,
-        DEFAULT_CENTER.lng
+        DEFAULT_CENTER.lng,
       );
       mapRef.current.setCenter(defaultCenterPos);
     }
@@ -137,10 +137,10 @@ const KakaoMap = ({ reports, center }: KakaoMapProps) => {
       <div
         id="map"
         style={{
-          width: "70%",
+          width: "100%",
           height: "350px",
-          border: "2px solid gray",
-          borderRadius: "10px",
+          // border: "2px solid gray",
+          // borderRadius: "10px",
         }}
       />
     </div>

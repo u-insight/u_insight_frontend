@@ -16,20 +16,9 @@ import { UrgencyLevel_e } from "../../../types/report";
 import { LocationPicker } from "../../../components/features/LocationPicker";
 import { ReportData, useReportsStore } from "../../../store/useReportsStore";
 
-// interface FormData {
-//   title: string;
-//   description: string;
-//   location: string;
-//   urgency: UrgencyLevel_e;
-//   coordinates?: {
-//     lat: number;
-//     lng: number;
-//   };
-//   images: File[];
-// }
-
 export default function ReportsNew() {
   const [formData, setFormData] = useState<ReportData>({
+    id: "",
     title: "",
     description: "",
     location: "",
