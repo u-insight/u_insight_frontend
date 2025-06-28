@@ -93,7 +93,9 @@ export class AddressService {
     try {
       // Kakao Map API를 사용한 지오코딩
       // 실제 구현시 Kakao Developers에서 앱 키 발급 필요
-      const KAKAO_API_KEY = process.env.NEXT_PUBLIC_KAKAO_API_KEY;
+      const KAKAO_API_KEY = process.env.NEXT_PUBLIC_KAKAO_JS_KEY;
+
+      console.log("KAKAO_API_KEY",KAKAO_API_KEY);
 
       if (!KAKAO_API_KEY) {
         console.warn("Kakao API 키가 설정되지 않았습니다.");
