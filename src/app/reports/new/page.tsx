@@ -153,8 +153,8 @@ export default function ReportsNew() {
     const isSelected = formData.urgency === urgencyType;
 
     return `relative rounded-xl border-2 p-4 transition-all duration-200 hover:shadow-md ${isSelected
-        ? `${config.selectedColor} shadow-lg`
-        : `${config.baseColor} hover:border-gray-300`
+      ? `${config.selectedColor} shadow-lg`
+      : `${config.baseColor} hover:border-gray-300`
       }`;
   };
 
@@ -258,7 +258,7 @@ export default function ReportsNew() {
         {/* 사진 첨부 */}
         <div className="p-6 bg-white border shadow-sm rounded-xl">
           <label className="block mb-4 text-lg font-semibold text-gray-900">
-            사진 첨부{" "}
+            사진 첨부
             <span className="font-normal text-gray-500">(선택사항)</span>
           </label>
 
@@ -431,15 +431,15 @@ const ImageCarousel = ({
       </div>
 
       {/* 썸네일 네비게이션 + 추가 버튼 */}
-      <div className="flex gap-2 pb-2 overflow-x-auto">
+      <div className="flex gap-2 pb-2 overflow-x-auto no-scrollbar">
         {/* 기존 이미지 썸네일들 */}
         {images.map((image, index) => (
           <button
             key={index}
             onClick={() => setCurrentIndex(index)}
             className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all ${currentIndex === index
-                ? "border-blue-500 shadow-md"
-                : "border-gray-200 hover:border-gray-300"
+              ? "border-blue-500 shadow-md"
+              : "border-gray-200 hover:border-gray-300"
               }`}
           >
             <Image
