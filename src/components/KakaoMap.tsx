@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ReportData } from "@/store/useReportsStore";
 import { UrgencyLevel_e } from "../types/report";
+import { MapProps } from "react-kakao-maps-sdk";
 
 interface KakaoMapProps {
   reports: ReportData[];
@@ -27,9 +28,9 @@ const urgencyColors = {
 const DEFAULT_CENTER = { lat: 36.35, lng: 128.70 };
 
 const KakaoMap = ({ reports, center }: KakaoMapProps) => {
-  const mapRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
-  const infoWindowRef = useRef<any>(null);
+  const mapRef = useRef<kakao.maps.Map>(null);
+  const markersRef = useRef<kakao.maps.Marker[]>([]);
+  const infoWindowRef = useRef<kakao.maps.InfoWindow>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   const mapCenter = center ?? DEFAULT_CENTER;
@@ -72,18 +73,19 @@ const KakaoMap = ({ reports, center }: KakaoMapProps) => {
       const markerImage = new window.kakao.maps.MarkerImage(
         createColorMarker(color),
         new window.kakao.maps.Size(24, 24),
-        { offset: new window.kakao.maps.Point(12, 12) }
+        { offset: new window.kakao.maps.Point(12, 12) },
       );
 
       const position = new window.kakao.maps.LatLng(
         report.coordinates?.lat,
-        report.coordinates?.lng
+        report.coordinates?.lng,
       );
 
       const marker = new window.kakao.maps.Marker({
         map: mapRef.current,
         position,
         image: markerImage,
+        title: "",
       });
 
       markersRef.current.push(marker);
@@ -95,8 +97,8 @@ const KakaoMap = ({ reports, center }: KakaoMapProps) => {
             <p style="margin:0 0 5px 0;">${report.description}</p>
           </div>
         `;
-        infoWindowRef.current.setContent(content);
-        infoWindowRef.current.open(mapRef.current, marker);
+        infoWindowRef.current?.setContent(content);
+        infoWindowRef.current?.open(mapRef.current!, marker);
       });
     });
 
@@ -106,21 +108,21 @@ const KakaoMap = ({ reports, center }: KakaoMapProps) => {
         DEFAULT_CENTER.lat,
         DEFAULT_CENTER.lng,
       );
-      mapRef.current.setCenter(centerPos);
-      mapRef.current.setLevel(8);
+      mapRef.current?.setCenter(centerPos);
+      mapRef.current?.setLevel(8);
     } else if (reports.length === 1) {
       const first = reports[0];
       const centerPos = new window.kakao.maps.LatLng(
         first.coordinates?.lat,
-        first.coordinates?.lng
+        first.coordinates?.lng,
       );
-      mapRef.current.setCenter(centerPos);
+      mapRef.current?.setCenter(centerPos);
     } else {
       const defaultCenterPos = new window.kakao.maps.LatLng(
         DEFAULT_CENTER.lat,
-        DEFAULT_CENTER.lng
+        DEFAULT_CENTER.lng,
       );
-      mapRef.current.setCenter(defaultCenterPos);
+      mapRef.current?.setCenter(defaultCenterPos);
     }
   }, [reports, isMapLoaded]);
 
@@ -136,10 +138,10 @@ const KakaoMap = ({ reports, center }: KakaoMapProps) => {
       <div
         id="map"
         style={{
-          width: "70%",
+          width: "100%",
           height: "350px",
-          border: "2px solid gray",
-          borderRadius: "10px",
+          // border: "2px solid gray",
+          // borderRadius: "10px",
         }}
       />
     </div>
