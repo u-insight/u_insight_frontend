@@ -26,11 +26,6 @@ export const LocationDisplay: React.FC<LocationDisplayProps> = ({
     return "부정확";
   };
 
-  //   const getAccuracyColor = (accuracy: number): "green" | "yellow" | "red" => {
-  //     if (accuracy < 50) return "green";
-  //     if (accuracy < 100) return "yellow";
-  //     return "red";
-  //   };
 
   const formatTimestamp = (timestamp: number) => {
     const date = new Date(timestamp);
@@ -52,7 +47,7 @@ export const LocationDisplay: React.FC<LocationDisplayProps> = ({
       <div className="space-y-4">
         {/* 주소 정보 */}
         <div className="flex items-start gap-3">
-          <MapPin className="text-green-primary mt-1 h-6 w-6" />
+          <MapPin className="w-6 h-6 mt-1 text-green-primary" />
           <div className="flex-1">
             <h3 className="mb-1 text-lg font-black text-gray-900">위치</h3>
             {address ? (
@@ -80,7 +75,7 @@ export const LocationDisplay: React.FC<LocationDisplayProps> = ({
             {/* 정확도 */}
             {showAccuracy && (
               <div className="flex items-center gap-2">
-                <Target className="h-5 w-5 text-gray-500" />
+                <Target className="w-5 h-5 text-gray-500" />
                 <span className="text-sm font-bold text-gray-600">
                   {formatAccuracy(location.accuracy)}
                 </span>
@@ -102,7 +97,7 @@ export const LocationDisplay: React.FC<LocationDisplayProps> = ({
             {/* 시간 정보 */}
             {showTimestamp && (
               <div className="flex items-center gap-2">
-                <Clock className="h-5 w-5 text-gray-500" />
+                <Clock className="w-5 h-5 text-gray-500" />
                 <span className="text-sm font-bold text-gray-600">
                   {formatTimestamp(location.timestamp)}
                 </span>
@@ -123,7 +118,7 @@ export const LocationDisplay: React.FC<LocationDisplayProps> = ({
 
         {/* 정확도 상세 정보 */}
         {showAccuracy && location.accuracy > 100 && (
-          <div className="rounded-lg border-2 border-yellow-200 bg-yellow-50 p-3">
+          <div className="p-3 border-2 border-yellow-200 rounded-lg bg-yellow-50">
             <p className="text-sm font-bold text-yellow-800">
               ⚠️ 위치 정확도가 낮습니다 (±{Math.round(location.accuracy)}m).
               실외에서 다시 시도하거나 Wi-Fi를 활성화해보세요.

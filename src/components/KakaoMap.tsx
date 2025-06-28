@@ -156,8 +156,6 @@ const KakaoMap = ({ reports, center }: KakaoMapProps) => {
         style={{
           width: "100%",
           height: "350px",
-          // border: "2px solid gray",
-          // borderRadius: "10px",
         }}
       />
     </div>

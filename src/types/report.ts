@@ -8,10 +8,10 @@ export type UrgencyLevel_e =
   (typeof UrgencyLevel_e)[keyof typeof UrgencyLevel_e];
 
 export const ReportStatus_e = {
-  Pending: "PENDING",
-  InProgress: "IN_PROGRESS",
-  Resolved: "RESOLVED",
-  Rejected: "REJECTED",
+  Pending: "Pending",
+  InProgress: "InProgress",
+  Resolved: "Resolved",
+  Rejected: "Rejected",
 } as const;
 
 export type ReportStatus_e =
@@ -27,7 +27,7 @@ export interface Report {
     lng: number;
   };
   urgency: UrgencyLevel_e;
-  images: string[]; // 이미지 URL 배열
+  images: string[];
   status: ReportStatus_e;
   createdAt: Date;
   updatedAt: Date;
