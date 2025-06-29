@@ -39,14 +39,15 @@ const AdminReportsPage = () => {
       const marker = new window.kakao.maps.Marker({
         position: new window.kakao.maps.LatLng(lat, lng),
         map,
-        title: report.title,
+        title: report.description,
       });
 
       const iwContent = `
         <div style="padding:10px;font-size:13px;min-width:150px;">
-          <strong style="color:${urgencyColor}">[${report.urgency}]</strong> ${report.title}<br/>
+          <strong style="color:${urgencyColor}">[${report.urgency}]</strong> ${report.description}<br/>
           <small>${report.location}</small><br/>
         </div>`;
+      // <strong style="color:${urgencyColor}">[${report.urgency}]</strong> ${report.title}<br/>
 
       // <small>${new Date(report.timestamp).toLocaleDateString()}</small>
       const infowindow = new window.kakao.maps.InfoWindow({
@@ -102,7 +103,7 @@ const AdminReportsPage = () => {
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 max-w-[60%]">
-                  <h3 className="font-semibold text-gray-800 truncate">{report.title || "제목 없음"}</h3>
+                  <h3 className="font-semibold text-gray-800 truncate">{report.description}</h3>
                 </div>
                 {/* <span className="text-xs font-medium text-gray-500">
                   <span className={`text-xs font-medium ${urgencyColor}`}>{urgencyLabel}</span> |

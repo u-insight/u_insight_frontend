@@ -5,7 +5,6 @@ import { UrgencyLevel_e } from "../types/report";
 
 export interface ReportData {
   id: string;
-  title: string;
   description: string;
   location: string;
   urgency: UrgencyLevel_e;
@@ -29,8 +28,7 @@ export const useReportsStore = create<ReportsState>((set) => ({
     // TODO: 빈배열로 초기화 필요
     {
       id: "0",
-      title: "",
-      description: "asdf",
+      description: "밤에 너무 어두워요.",
       location: "경상북도 의성군 의성읍 충효로 88",
       urgency: "urgent",
       images: [],
@@ -41,8 +39,7 @@ export const useReportsStore = create<ReportsState>((set) => ({
     },
     {
       id: "1",
-      title: "",
-      description: "asdf",
+      description: "도로에 쓰레기가 많아요.",
       location: "경상북도 의성군 봉양면 봉호로 14",
       urgency: "urgent",
       images: [],
