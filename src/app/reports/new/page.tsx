@@ -19,7 +19,6 @@ import { ReportData, useReportsStore } from "../../../store/useReportsStore";
 export default function ReportsNew() {
   const [formData, setFormData] = useState<ReportData>({
     id: "",
-    title: "",
     description: "",
     location: "",
     urgency: UrgencyLevel_e.Normal,

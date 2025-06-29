@@ -235,7 +235,8 @@ const ReportsPage = () => {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between mb-2">
                               <h4 className="font-medium text-gray-900 truncate">
-                                {report.title || "제목 없음"}
+                                {report.description}
+                                {/* {report.title || "제목 없음"} */}
                               </h4>
                               <span
                                 className={`ml-2 flex-shrink-0 rounded px-2 py-1 text-xs font-medium ${config.bgColor} ${config.textColor}`}

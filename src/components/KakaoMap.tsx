@@ -105,10 +105,10 @@ const KakaoMap = ({ reports, center }: KakaoMapProps) => {
       window.kakao.maps.event.addListener(marker, "click", () => {
         const content = `
           <div style="padding:10px; min-width:250px;">
-            <h4 style="margin:0 0 5px 0;">${report.title}</h4>
             <p style="margin:0 0 5px 0;">${report.description}</p>
           </div>
-        `;
+          `;
+        // <h4 style="margin:0 0 5px 0;">${report.title}</h4>
         infoWindowRef.current!.setContent(content);
         infoWindowRef.current!.open(mapRef.current!, marker);
       });
